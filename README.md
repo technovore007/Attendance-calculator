@@ -30,7 +30,7 @@ This tool calculates your current attendance, tells you how many classes you nee
 
 ## 📸 App Preview
 
-![Smart Attendance App Preview](screenshot.png)
+![Smart Attendance App Preview](Screenshot.png)
 
 ---
 

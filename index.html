@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>🎯 Attendance Calculator</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js" defer></script>
+  <script src="script.js" defer></script>
+</head>
+<body>
+
+  <div class="container">
+    <header>
+      <h1>🎯 Attendance Calculator</h1>
+      <button id="theme-toggle">🌙</button>
+    </header>
+
+    <main>
+      <div class="input-group">
+        <label for="total-classes">📚 Total Classes</label>
+        <input type="number" id="total-classes" placeholder="Enter total classes">
+      </div>
+
+      <div class="input-group">
+        <label for="missed-classes">🚫 Missed Classes</label>
+        <input type="number" id="missed-classes" placeholder="Enter missed classes">
+      </div>
+
+      <div class="input-group">
+        <label for="threshold">🎯 Threshold (%)</label>
+        <input type="number" id="threshold" placeholder="Eg: 80">
+      </div>
+
+      <button id="calculate-btn">✨ Calculate ✨</button>
+
+      <div class="result" id="result"></div>
+    </main>
+
+    <footer>
+      <p>Made with ❤️ by Mandeep</p>
+    </footer>
+  </div>
+
+</body>
+</html>

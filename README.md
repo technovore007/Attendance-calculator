@@ -1,56 +1,43 @@
-# 🎯 Smart Attendance Tracker
+# 🎯 Smart Attendance Calculator
 
-🚀 A modern, stylish web app to track your class attendance, calculate your attendance percentage, and predict how many classes you need to attend to maintain your goal!
+Hey there! 👋  
+Tired of manually calculating your attendance? Worry no more — **Smart Attendance Calculator** is here to make your life easier, faster, and smarter! 🧠⚡
+
+---
+
+## 🚀 Why This App?
+Managing attendance shouldn't feel like solving a math problem.  
+This tool calculates your current attendance, tells you how many classes you need to attend to hit your target 🎯, and it's installable just like a real app!
+
+---
+
+## 🛠️ Built With
+- **HTML5** — for clean structure
+- **CSS3** — with smooth animations and dark/light theme
+- **JavaScript ES6** — smart calculations at your fingertips
+- **PWA Ready** — install it and use offline!
 
 ---
 
 ## ✨ Features
-- 🔥 Light Mode and Dark Mode toggle
-- 🎨 Smooth animations and beautiful transitions
-- 📱 PWA-ready (Installable like a real app!)
-- 💻 Fully Responsive and Mobile Friendly
-- 🎯 Calculates attendance percentage
-- 🧠 Predicts minimum classes required to achieve target attendance
+- 🌗 **Light/Dark Mode** — switch based on your mood!
+- 🧮 **Instant Attendance Calculator**
+- 🎯 **Target Predictor** — reach your threshold without guessing
+- 📱 **Installable App** — Add to Home Screen in 1 click
+- ⚡ **Blazing Fast and Minimal**
 
 ---
 
-## 🛠️ Technologies Used
-- HTML5
-- CSS3 (with modern animations)
-- JavaScript (ES6+)
-- PWA (Progressive Web App features)
+## 📸 App Preview
+
+![Smart Attendance App Preview](screenshot.png)
 
 ---
 
-## 📸 Screenshots
-![App Screenshot](screenshot.png)
+## 📥 Installation Guide
 
----
+If you want to run it locally:
 
-## 🚀 Live Demo
-
-> **Check it out here:**  
-> [https://your-username.github.io/attendance-calculator/](https://your-username.github.io/attendance-calculator/)
-
----
-
-## 🧠 How to Use
-1. Enter total classes conducted.
-2. Enter classes you missed (absent).
-3. Set your threshold attendance goal.
-4. Get instant results!
-
----
-
-## 🛡️ License
-This project is licensed under the [MIT License](LICENSE).
-
----
-
-## 🤝 Contributing
-Pull requests are welcome. Feel free to fork and improve the project!
-
----
-
-## ✍️ Author
-- Made with ❤️ by **Mandeep Singh**
+1. Clone the repository
+   ```bash
+   git clone https://github.com/technovore007/Attendance-calculator.git

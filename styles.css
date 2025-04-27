@@ -1,16 +1,16 @@
 :root {
-    --background: #f5f5f5;
-    --foreground: #222;
-    --accent: #4f46e5;
-    --card: #ffffff;
+    --background: #f0f0f0;
+    --foreground: #1a1a1a;
+    --accent: #6366f1;
+    --card: rgba(255, 255, 255, 0.8);
     --input: #e0e0e0;
   }
   
-  [data-theme="dark"] {
+  body[data-theme="dark"] {
     --background: #121212;
     --foreground: #f5f5f5;
     --accent: #8b5cf6;
-    --card: #1e1e1e;
+    --card: rgba(30, 30, 30, 0.8);
     --input: #333;
   }
   
@@ -21,103 +21,95 @@
   }
   
   body {
+    font-family: 'Poppins', sans-serif;
     background: var(--background);
     color: var(--foreground);
-    font-family: 'Poppins', sans-serif;
-    transition: all 0.4s ease;
-  }
-  
-  .container {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: space-between;
-    padding: 2rem;
+    transition: background 0.3s, color 0.3s;
   }
   
   header {
-    width: 100%;
-    max-width: 600px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    margin-top: 20px;
+    text-align: center;
   }
   
   header h1 {
     font-size: 2rem;
+    margin-bottom: 10px;
   }
   
   #theme-toggle {
     background: var(--accent);
-    color: #fff;
+    color: white;
     border: none;
-    padding: 0.6rem;
-    border-radius: 50%;
+    padding: 8px 16px;
+    border-radius: 8px;
     cursor: pointer;
-    font-size: 1.2rem;
-    transition: transform 0.3s ease;
+    transition: transform 0.2s, background 0.3s;
   }
   
   #theme-toggle:hover {
-    transform: rotate(20deg);
+    background: #4f46e5;
+    transform: scale(1.05);
   }
   
-  main {
-    width: 100%;
-    max-width: 600px;
+  .container {
     background: var(--card);
-    padding: 2rem;
-    margin-top: 2rem;
+    backdrop-filter: blur(10px);
+    padding: 30px;
     border-radius: 20px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    margin-top: 30px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    width: 90%;
+    max-width: 400px;
+    text-align: center;
+    transition: background 0.3s;
   }
   
   .input-group {
-    margin-bottom: 1.5rem;
+    margin-bottom: 20px;
+    text-align: left;
   }
   
   .input-group label {
     display: block;
-    margin-bottom: 0.5rem;
+    margin-bottom: 8px;
+    font-weight: 600;
   }
   
   .input-group input {
     width: 100%;
-    padding: 0.8rem;
+    padding: 10px;
     border: none;
-    border-radius: 12px;
     background: var(--input);
+    border-radius: 8px;
     color: var(--foreground);
-    font-size: 1rem;
   }
   
-  #calculate-btn {
-    width: 100%;
-    padding: 1rem;
-    margin-top: 1rem;
+  #calculate-btn, #install-btn {
     background: var(--accent);
-    border: none;
-    border-radius: 12px;
     color: white;
-    font-size: 1.2rem;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 10px;
+    margin-top: 10px;
     cursor: pointer;
-    transition: background 0.3s;
+    font-size: 1rem;
+    transition: transform 0.2s, background 0.3s, box-shadow 0.3s;
   }
   
-  #calculate-btn:hover {
-    background: #6d28d9;
+  #calculate-btn:hover, #install-btn:hover {
+    background: #4f46e5;
+    transform: scale(1.05);
+    box-shadow: 0px 8px 16px rgba(109, 40, 217, 0.4);
   }
   
-  .result {
-    margin-top: 2rem;
-    font-size: 1.2rem;
-    text-align: center;
-    min-height: 100px;
-  }
-  
-  footer {
-    margin-top: 2rem;
-    font-size: 0.9rem;
+  #result {
+    margin-top: 20px;
+    font-size: 1.1rem;
+    font-weight: bold;
   }
   

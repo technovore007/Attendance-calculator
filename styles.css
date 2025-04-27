@@ -1,0 +1,123 @@
+:root {
+    --background: #f5f5f5;
+    --foreground: #222;
+    --accent: #4f46e5;
+    --card: #ffffff;
+    --input: #e0e0e0;
+  }
+  
+  [data-theme="dark"] {
+    --background: #121212;
+    --foreground: #f5f5f5;
+    --accent: #8b5cf6;
+    --card: #1e1e1e;
+    --input: #333;
+  }
+  
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  body {
+    background: var(--background);
+    color: var(--foreground);
+    font-family: 'Poppins', sans-serif;
+    transition: all 0.4s ease;
+  }
+  
+  .container {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    padding: 2rem;
+  }
+  
+  header {
+    width: 100%;
+    max-width: 600px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  header h1 {
+    font-size: 2rem;
+  }
+  
+  #theme-toggle {
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    padding: 0.6rem;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 1.2rem;
+    transition: transform 0.3s ease;
+  }
+  
+  #theme-toggle:hover {
+    transform: rotate(20deg);
+  }
+  
+  main {
+    width: 100%;
+    max-width: 600px;
+    background: var(--card);
+    padding: 2rem;
+    margin-top: 2rem;
+    border-radius: 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  }
+  
+  .input-group {
+    margin-bottom: 1.5rem;
+  }
+  
+  .input-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+  
+  .input-group input {
+    width: 100%;
+    padding: 0.8rem;
+    border: none;
+    border-radius: 12px;
+    background: var(--input);
+    color: var(--foreground);
+    font-size: 1rem;
+  }
+  
+  #calculate-btn {
+    width: 100%;
+    padding: 1rem;
+    margin-top: 1rem;
+    background: var(--accent);
+    border: none;
+    border-radius: 12px;
+    color: white;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+  
+  #calculate-btn:hover {
+    background: #6d28d9;
+  }
+  
+  .result {
+    margin-top: 2rem;
+    font-size: 1.2rem;
+    text-align: center;
+    min-height: 100px;
+  }
+  
+  footer {
+    margin-top: 2rem;
+    font-size: 0.9rem;
+  }
+  

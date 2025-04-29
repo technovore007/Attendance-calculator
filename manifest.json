@@ -1,0 +1,53 @@
+{
+    "name": "Attendance Calculator",
+    "short_name": "Attendance",
+    "description": "Calculate and track your attendance requirements easily",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#ffffff",
+    "orientation": "any",
+    "icons": [
+      {
+        "src": "icons/icon-192.png",
+        "sizes": "192x192",
+        "type": "image/png",
+        "purpose": "any maskable"
+      },
+      {
+        "src": "icons/icon-512.png",
+        "sizes": "512x512",
+        "type": "image/png",
+        "purpose": "any maskable"
+      }
+    ],
+    "screenshots": [
+      {
+        "src": "screenshots/desktop.png",
+        "sizes": "1280x800",
+        "type": "image/png",
+        "form_factor": "wide"
+      },
+      {
+        "src": "screenshots/mobile.png",
+        "sizes": "750x1334",
+        "type": "image/png",
+        "form_factor": "narrow"
+      }
+    ],
+    "categories": ["education", "utilities"],
+    "shortcuts": [
+      {
+        "name": "Calculate Attendance",
+        "url": "/?action=calculate",
+        "icons": [
+          {
+            "src": "icons/calc-96.png",
+            "sizes": "96x96"
+          }
+        ]
+      }
+    ],
+    "lang": "en-US",
+    "dir": "ltr"
+  }

@@ -3,47 +3,109 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  
   <title>Attendance Calculator 📚</title>
 
   <link rel="stylesheet" href="styles.css">
   <link rel="manifest" href="manifest.json">
 
-  <link rel="icon" href="icon-192.png" type="image/png">
-  <link rel="icon" href="dart.png" type="image/png">
+  <!-- Favicon and app icons -->
+  <link rel="icon" href="icons/favicon.ico" type="image/x-icon">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="icons/icon-152.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="icons/icon-180.png">
+  <link rel="apple-touch-icon" sizes="167x167" href="icons/icon-167.png">
 
+  <!-- Splash screens for iOS -->
+  <link rel="apple-touch-startup-image" href="icons/splash-640x1136.png" media="(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2)">
+  <link rel="apple-touch-startup-image" href="icons/splash-750x1334.png" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)">
+  <link rel="apple-touch-startup-image" href="icons/splash-1242x2208.png" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)">
+  <link rel="apple-touch-startup-image" href="icons/splash-1125x2436.png" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)">
+  <link rel="apple-touch-startup-image" href="icons/splash-1536x2048.png" media="(min-device-width: 768px) and (max-device-width: 1024px) and (-webkit-device-pixel-ratio: 2)">
 
-  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/canvas-confetti/1.6.0/confetti.browser.min.js"></script>
   <script src="script.js" defer></script>
+  <script>
+    // Register service worker for PWA functionality
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/service-worker.js')
+          .then(registration => {
+            console.log('Service Worker registered with scope:', registration.scope);
+          })
+          .catch(error => {
+            console.error('Service Worker registration failed:', error);
+          });
+      });
+    }
+  </script>
 </head>
 <body> 
+  <div id="theme-toggle-container">
+    <button id="theme-toggle" aria-label="Toggle theme">
+      <span class="icon">🌓</span>
+    </button>
+  </div>
 
   <header>
-    <h1>📚 Attendance Calculator</h1>
-    <button id="theme-toggle">🌓</button>
+    <h1><span class="icon">📚</span> Attendance Calculator</h1>
+    <p class="subtitle">Track your attendance requirements easily</p>
   </header>
 
   <main class="container">
-    <div class="input-group">
-      <label>Total Classes 🏫</label>
-      <input type="number" id="total-classes" placeholder="Enter total classes">
+    <div class="card input-section">
+      <div class="input-group">
+        <label for="total-classes">Total Classes <span class="icon">🏫</span></label>
+        <input type="number" id="total-classes" placeholder="Enter total classes" min="1" autocomplete="off">
+        <div class="input-highlight"></div>
+      </div>
+
+      <div class="input-group">
+        <label for="missed-classes">Classes Missed <span class="icon">❌</span></label>
+        <input type="number" id="missed-classes" placeholder="Enter missed classes" min="0" autocomplete="off">
+        <div class="input-highlight"></div>
+      </div>
+      
+      <div class="input-group">
+        <label for="extra-classes">Extra Classes <span class="icon">🌟</span></label>
+        <input type="number" id="extra-classes" placeholder="Enter extra classes" value="0" min="0" autocomplete="off">
+        <div class="input-highlight"></div>
+        
+        <div class="switch-container">
+          <span>Exclude extra from total?</span>
+          <label class="switch" for="extra-classes-toggle">
+            <input type="checkbox" id="extra-classes-toggle">
+            <span class="slider round"></span>
+          </label>
+          <span class="tooltip">ON: Extra classes won't count in total</span>
+        </div>
+      </div>
+
+      <div class="input-group">
+        <label for="threshold">Threshold % <span class="icon">🎯</span></label>
+        <input type="number" id="threshold" placeholder="Enter threshold %" value="80" min="0" max="100" autocomplete="off">
+        <div class="input-highlight"></div>
+      </div>
+
+      <button id="calculate-btn" class="primary-btn">
+        <span class="icon">🎯</span> Calculate
+      </button>
     </div>
 
-    <div class="input-group">
-      <label>Classes Missed ❌</label>
-      <input type="number" id="missed-classes" placeholder="Enter missed classes">
+    <div id="result" class="result-card">
+      <!-- Results will be populated here -->
     </div>
 
-    <div class="input-group">
-      <label>Threshold % 🎯</label>
-      <input type="number" id="threshold" placeholder="Enter threshold %" value="80">
-    </div>
-
-    <button id="calculate-btn">🎯 Calculate</button>
-
-    <div id="result"></div>
-
-    <button id="install-btn" style="display: none;">📲 Install App</button>
+    <button id="install-btn" class="install-btn" style="display: none;">
+      <span class="icon">📲</span> Install App
+    </button>
   </main>
-
+  
+  <footer>
+    <p>Made with ❤️ | <button id="reset-btn" class="text-btn">Reset All</button></p>
+  </footer>
 </body>
 </html>

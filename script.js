@@ -1,464 +1,549 @@
-// Enhanced Attendance Calculator with Fixed Logic
-class AttendanceCalculator {
-  constructor() {
-    this.deferredPrompt = null;
-    this.isInstalled = false;
-    this.init();
+// Enhanced script with improved animations and Apple-style interactions
+document.addEventListener('DOMContentLoaded', () => {
+    initApp();
+  });
+  
+  // Initialize all app features
+  function initApp() {
+    initThemeToggle();
+    initAnimations();
+    initCalculator();
+    initPWAFeatures();
+    initInteractions();
   }
-
-  async init() {
-    this.checkInstallStatus();
-    this.initTheme();
-    this.initPWA();
-    this.initCalculator();
-    this.initInstallPrompt();
-    this.registerServiceWorker();
-  }
-
-  // Theme Management
-  initTheme() {
+  
+  // Theme Toggle with smooth animations
+  function initThemeToggle() {
     const themeToggle = document.getElementById('theme-toggle');
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
+    const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
     
-    const savedTheme = localStorage.getItem('theme');
-    if (savedTheme) {
-      document.body.dataset.theme = savedTheme;
-      this.updateThemeIcon(savedTheme === 'dark');
-    } else if (prefersDark.matches) {
+    // Initialize theme based on user preference
+    if (localStorage.getItem('theme')) {
+      document.body.dataset.theme = localStorage.getItem('theme');
+      updateThemeIcon(document.body.dataset.theme === 'dark');
+    } else if (prefersDarkScheme.matches) {
       document.body.dataset.theme = 'dark';
-      this.updateThemeIcon(true);
+      updateThemeIcon(true);
+    } else {
+      document.body.dataset.theme = '';
+      updateThemeIcon(false);
     }
     
+    // Apply transition class after initial load
+    setTimeout(() => {
+      document.body.classList.add('transitions-enabled');
+    }, 300);
+    
+    // Toggle theme with smooth animation
     themeToggle.addEventListener('click', () => {
-      this.toggleTheme();
+      // Add rotation animation
+      themeToggle.style.transform = 'rotate(360deg) scale(0.8)';
+      
+      // Apply haptic feedback if available
+      if (window.navigator && window.navigator.vibrate) {
+        navigator.vibrate(5);
+      }
+      
+      // Toggle theme with delay for animation
+      setTimeout(() => {
+        const isDark = document.body.dataset.theme === 'dark';
+        document.body.dataset.theme = isDark ? '' : 'dark';
+        localStorage.setItem('theme', document.body.dataset.theme);
+        updateThemeIcon(!isDark);
+        
+        // Reset transform for next animation
+        setTimeout(() => {
+          themeToggle.style.transform = '';
+        }, 300);
+      }, 150);
+      
+      // Apply page transition effect
+      const overlay = document.createElement('div');
+      overlay.style.position = 'fixed';
+      overlay.style.top = '0';
+      overlay.style.left = '0';
+      overlay.style.width = '100%';
+      overlay.style.height = '100%';
+      overlay.style.backgroundColor = document.body.dataset.theme === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)';
+      overlay.style.zIndex = '9999';
+      overlay.style.opacity = '0';
+      overlay.style.transition = 'opacity 0.3s ease';
+      document.body.appendChild(overlay);
+      
+      requestAnimationFrame(() => {
+        overlay.style.opacity = '1';
+        setTimeout(() => {
+          overlay.style.opacity = '0';
+          setTimeout(() => {
+            document.body.removeChild(overlay);
+          }, 300);
+        }, 100);
+      });
     });
     
-    prefersDark.addEventListener('change', (e) => {
+    // Update theme icon based on current theme
+    function updateThemeIcon(isDark) {
+      themeToggle.textContent = isDark ? '🌞' : '🌙';
+      themeToggle.setAttribute('aria-label', isDark ? 'Switch to light mode' : 'Switch to dark mode');
+    }
+    
+    // Listen for system theme changes
+    prefersDarkScheme.addEventListener('change', (e) => {
       if (!localStorage.getItem('theme')) {
         document.body.dataset.theme = e.matches ? 'dark' : '';
-        this.updateThemeIcon(e.matches);
+        updateThemeIcon(e.matches);
       }
     });
   }
-
-  toggleTheme() {
-    const themeToggle = document.getElementById('theme-toggle');
-    const isDark = document.body.dataset.theme === 'dark';
+  
+  // Enhanced page load animations
+  function initAnimations() {
+    // Staggered animation for input fields
+    document.querySelectorAll('.input-group').forEach((group, index) => {
+      group.style.animationDelay = `${index * 0.08 + 0.4}s`;
+    });
     
-    themeToggle.style.transform = 'rotate(180deg) scale(0.9)';
+    // Initial animations
+    const header = document.querySelector('header h1');
+    const container = document.querySelector('.container');
     
-    if ('vibrate' in navigator) {
-      navigator.vibrate(5);
-    }
+    header.style.opacity = '0';
+    header.style.transform = 'translateY(-20px)';
+    container.style.opacity = '0';
+    container.style.transform = 'translateY(40px)';
     
+    // Trigger animations with slight delay
     setTimeout(() => {
-      document.body.dataset.theme = isDark ? '' : 'dark';
-      localStorage.setItem('theme', document.body.dataset.theme);
-      this.updateThemeIcon(!isDark);
+      header.style.transition = 'all 0.8s cubic-bezier(0.16, 1, 0.3, 1)';
+      header.style.opacity = '1';
+      header.style.transform = 'translateY(0)';
       
       setTimeout(() => {
-        themeToggle.style.transform = '';
+        container.style.transition = 'all 1s cubic-bezier(0.16, 1, 0.3, 1)';
+        container.style.opacity = '1';
+        container.style.transform = 'translateY(0)';
       }, 200);
     }, 100);
   }
-
-  updateThemeIcon(isDark) {
-    const themeToggle = document.getElementById('theme-toggle');
-    themeToggle.textContent = isDark ? '☀️' : '🌙';
-    themeToggle.setAttribute('aria-label', `Switch to ${isDark ? 'light' : 'dark'} mode`);
-  }
-
-  // PWA Installation Management
-  initPWA() {
-    window.addEventListener('beforeinstallprompt', (e) => {
-      e.preventDefault();
-      this.deferredPrompt = e;
-      this.showInstallBanner();
-    });
-
-    window.addEventListener('appinstalled', () => {
-      this.isInstalled = true;
-      this.hideInstallPrompts();
-      this.showToast('App installed successfully! 🎉');
-    });
-
-    if (window.matchMedia('(display-mode: standalone)').matches) {
-      this.isInstalled = true;
-      this.hideInstallPrompts();
-    }
-  }
-
-  showInstallBanner() {
-    if (this.isInstalled || localStorage.getItem('install-banner-dismissed')) {
-      return;
-    }
-
-    const banner = document.getElementById('install-banner');
-    const closeBtn = document.getElementById('install-banner-close');
-    const installBtn = document.getElementById('install-banner-btn');
-
-    if (banner) {
-      banner.classList.remove('hidden');
-
-      closeBtn.addEventListener('click', () => {
-        this.hideInstallBanner();
-        localStorage.setItem('install-banner-dismissed', 'true');
-      });
-
-      installBtn.addEventListener('click', () => {
-        this.installApp();
-      });
-    }
-  }
-
-  hideInstallBanner() {
-    const banner = document.getElementById('install-banner');
-    if (banner) {
-      banner.classList.add('hidden');
-    }
-  }
-
-  initInstallPrompt() {
-    const installBtn = document.getElementById('install-btn');
-    
-    if (this.isInstalled && installBtn) {
-      installBtn.style.display = 'none';
-      return;
-    }
-
-    if (installBtn) {
-      installBtn.addEventListener('click', () => {
-        this.installApp();
-      });
-    }
-  }
-
-  async installApp() {
-    if (!this.deferredPrompt) {
-      this.showToast('Installation not available on this device');
-      return;
-    }
-
-    try {
-      this.deferredPrompt.prompt();
-      const { outcome } = await this.deferredPrompt.userChoice;
-      
-      if (outcome === 'accepted') {
-        this.showToast('Installing app...');
-      } else {
-        this.showToast('Installation cancelled');
-      }
-      
-      this.deferredPrompt = null;
-    } catch (error) {
-      console.error('Installation failed:', error);
-      this.showToast('Installation failed');
-    }
-  }
-
-  hideInstallPrompts() {
-    this.hideInstallBanner();
-    const installSection = document.getElementById('install-section');
-    if (installSection) {
-      installSection.style.display = 'none';
-    }
-  }
-
-  checkInstallStatus() {
-    if (window.navigator.standalone || window.matchMedia('(display-mode: standalone)').matches) {
-      this.isInstalled = true;
-      this.hideInstallPrompts();
-    }
-  }
-
-  // Calculator Logic - FIXED ORIGINAL LOGIC
-  initCalculator() {
+  
+  // Calculate Attendance with smooth result transitions
+  function initCalculator() {
     const calculateBtn = document.getElementById('calculate-btn');
-    const inputs = document.querySelectorAll('input[type="number"]');
+    const resultDiv = document.getElementById('result');
+    const extraClassesToggle = document.getElementById('extra-classes-toggle');
     
     calculateBtn.addEventListener('click', () => {
-      this.calculateAttendance();
-    });
-
-    inputs.forEach(input => {
-      input.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-          this.calculateAttendance();
-        }
-      });
-    });
-  }
-
-  async calculateAttendance() {
-    const calculateBtn = document.getElementById('calculate-btn');
-    const btnText = calculateBtn.querySelector('.btn-text');
-    const btnLoader = calculateBtn.querySelector('.btn-loader');
-    
-    // Show loading state
-    btnText.classList.add('hidden');
-    btnLoader.classList.remove('hidden');
-    calculateBtn.disabled = true;
-
-    if ('vibrate' in navigator) {
-      navigator.vibrate(10);
-    }
-
-    try {
-      await new Promise(resolve => setTimeout(resolve, 500));
+      // Add button press animation
+      calculateBtn.classList.add('active');
+      calculateBtn.style.transform = 'scale(0.96)';
       
-      const result = this.performCalculation();
-      this.displayResult(result);
+      // Apply haptic feedback if available
+      if (window.navigator && window.navigator.vibrate) {
+        navigator.vibrate(10);
+      }
       
-    } catch (error) {
-      this.showError('Calculation failed. Please check your inputs.');
-    } finally {
-      btnText.classList.remove('hidden');
-      btnLoader.classList.add('hidden');
-      calculateBtn.disabled = false;
-    }
-  }
-
-  // FIXED CALCULATION LOGIC - RESTORED ORIGINAL BEHAVIOR
-  performCalculation() {
-    const totalClasses = parseInt(document.getElementById('total-classes').value);
-    const missedClasses = parseInt(document.getElementById('missed-classes').value);
-    const extraClasses = parseInt(document.getElementById('extra-classes').value) || 0;
-    const threshold = parseFloat(document.getElementById('threshold').value);
-    const countExtraInTotal = document.getElementById('extra-classes-toggle').checked;
-
-    // Validation
-    if (!totalClasses || totalClasses <= 0) {
-      throw new Error('Please enter a valid number of total classes');
-    }
-    if (missedClasses < 0 || missedClasses > totalClasses) {
-      throw new Error('Missed classes cannot be negative or greater than total classes');
-    }
-    if (!threshold || threshold <= 0 || threshold > 100) {
-      throw new Error('Please enter a valid threshold percentage (1-100)');
-    }
-
-    // ORIGINAL CALCULATION LOGIC RESTORED
-    let attendedClasses = totalClasses - missedClasses;
-    let totalForCalculation;
-
-    if (countExtraInTotal) {
-      // Toggle ON: Extra classes reduce the total requirement
-      totalForCalculation = totalClasses - extraClasses;
-      // Attended classes remain the same (totalClasses - missedClasses)
-    } else {
-      // Toggle OFF: Extra classes add to attendance
-      totalForCalculation = totalClasses;
-      attendedClasses = attendedClasses + extraClasses;
-    }
-
-    const currentAttendance = (attendedClasses / totalForCalculation) * 100;
-    const requiredAttendance = threshold;
-
-    let status, message, classesNeeded = 0, maxMissable = 0;
-
-    if (currentAttendance >= requiredAttendance) {
-      status = 'success';
-      // Calculate maximum classes that can be missed while maintaining threshold
-      const minRequiredClasses = Math.ceil((requiredAttendance * totalForCalculation) / 100);
-      maxMissable = attendedClasses - minRequiredClasses;
-      message = `Excellent! You're meeting the attendance requirement.`;
-    } else {
-      status = 'warning';
-      // Calculate additional classes needed to meet requirement
-      const requiredClasses = Math.ceil((requiredAttendance * totalForCalculation) / 100);
-      classesNeeded = requiredClasses - attendedClasses;
-      message = `You need to attend ${classesNeeded} more class${classesNeeded > 1 ? 'es' : ''} to reach ${requiredAttendance}%.`;
-    }
-
-    return {
-      status,
-      message,
-      currentAttendance: currentAttendance.toFixed(2),
-      requiredAttendance: requiredAttendance.toFixed(1),
-      classesNeeded,
-      maxMissable,
-      attendedClasses,
-      totalForCalculation
-    };
-  }
-
-  displayResult(result) {
-    const resultContainer = document.getElementById('result');
-    const resultContent = document.getElementById('result-content');
-    
-    const statusIcon = result.status === 'success' ? '✅' : '⚠️';
-    const statusClass = `result-${result.status}`;
-    
-    resultContent.innerHTML = `
-      <div class="result-item ${statusClass}">
-        <div class="result-icon">${statusIcon}</div>
-        <div class="result-text">
-          <strong>Current Attendance: ${result.currentAttendance}%</strong>
-          <span>Required: ${result.requiredAttendance}% | Classes: ${result.attendedClasses}/${result.totalForCalculation}</span>
-        </div>
-      </div>
-      
-      <div class="result-item">
-        <div class="result-icon">📊</div>
-        <div class="result-text">
-          <strong>${result.message}</strong>
-        </div>
-      </div>
-      
-      ${result.status === 'success' && result.maxMissable > 0 ? `
-        <div class="result-item result-success">
-          <div class="result-icon">🎯</div>
-          <div class="result-text">
-            <strong>You can miss ${result.maxMissable} more class${result.maxMissable > 1 ? 'es' : ''}</strong>
-            <span>And still maintain ${result.requiredAttendance}% attendance</span>
-          </div>
-        </div>
-      ` : ''}
-      
-      ${result.classesNeeded > 0 ? `
-        <div class="result-item result-warning">
-          <div class="result-icon">📚</div>
-          <div class="result-text">
-            <strong>Attend ${result.classesNeeded} more class${result.classesNeeded > 1 ? 'es' : ''}</strong>
-            <span>To reach ${result.requiredAttendance}% attendance</span>
-          </div>
-        </div>
-      ` : ''}
-    `;
-    
-    resultContainer.classList.remove('hidden');
-    
-    setTimeout(() => {
-      resultContainer.scrollIntoView({ 
-        behavior: 'smooth', 
-        block: 'nearest' 
-      });
-    }, 100);
-  }
-
-  showError(message) {
-    const resultContainer = document.getElementById('result');
-    const resultContent = document.getElementById('result-content');
-    
-    resultContent.innerHTML = `
-      <div class="result-item result-error">
-        <div class="result-icon">❌</div>
-        <div class="result-text">
-          <strong>Error</strong>
-          <span>${message}</span>
-        </div>
-      </div>
-    `;
-    
-    resultContainer.classList.remove('hidden');
-  }
-
-  showToast(message) {
-    const toast = document.createElement('div');
-    toast.className = 'toast';
-    toast.textContent = message;
-    toast.style.cssText = `
-      position: fixed;
-      bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      background-color: var(--md-sys-color-inverse-surface);
-      color: var(--md-sys-color-inverse-on-surface);
-      padding: 12px 20px;
-      border-radius: 8px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-      z-index: 1000;
-      font-size: 0.875rem;
-      max-width: 90%;
-      text-align: center;
-      animation: slideUp 0.3s ease;
-    `;
-
-    document.body.appendChild(toast);
-
-    setTimeout(() => {
-      toast.style.animation = 'slideDown 0.3s ease';
       setTimeout(() => {
-        if (document.body.contains(toast)) {
-          document.body.removeChild(toast);
-        }
+        calculateBtn.style.transform = '';
+        setTimeout(() => calculateBtn.classList.remove('active'), 200);
+      }, 200);
+      
+      // Get input values with animation effects
+      animateInput('total-classes');
+      animateInput('missed-classes');
+      animateInput('extra-classes');
+      animateInput('threshold');
+      
+      const total = parseInt(document.getElementById('total-classes').value);
+      const missed = parseInt(document.getElementById('missed-classes').value);
+      const extra = parseInt(document.getElementById('extra-classes').value) || 0;
+      const threshold = parseFloat(document.getElementById('threshold').value);
+      const countExtraInTotal = extraClassesToggle.checked;
+      
+      // Validate inputs with smooth error indication
+      if (isNaN(total) || isNaN(missed) || total <= 0 || missed < 0 || threshold <= 0) {
+        showErrorAnimation();
+        showResult("⚠️ Please enter valid numbers.", "warning");
+        return;
+      }
+      
+      // Calculate attendance based on extra classes settings
+      // When toggle is ON: (total - missed) / (total - extra)
+      // When toggle is OFF: (total - missed + extra) / total
+      
+      let attendedClasses = total - missed;
+      let totalForCalculation;
+      
+      if (countExtraInTotal) {
+        // Toggle ON: Extra classes are included in attendance but not in total
+        totalForCalculation = total - extra;
+      } else {
+        // Toggle OFF: Extra classes are added to attendance but total remains unchanged
+        attendedClasses = attendedClasses + extra;
+        totalForCalculation = total;
+      }
+      
+      const currentAttendance = (attendedClasses / totalForCalculation) * 100;
+      
+      // Generate result message with enhanced formatting
+      let message = `<div class="result-section">`;
+      message += `<span class="result-title">Current Attendance</span>`;
+      message += `<span class="result-value">${currentAttendance.toFixed(2)}%</span>`;
+      message += `</div>`;
+      
+      message += `<div class="result-section">`;
+      message += `<span class="result-detail">Classes Attended: <strong>${attendedClasses}</strong> / <strong>${totalForCalculation}</strong></span>`;
+      message += `</div>`;
+      
+      if (currentAttendance < threshold) {
+        // Calculate classes needed to reach threshold
+        let needed = Math.ceil((threshold * totalForCalculation - 100 * attendedClasses) / (100 - threshold));
+        
+        message += `<div class="result-section warning">`;
+        message += `<span class="result-action">📈 Attend at least <strong>${needed}</strong> more class(es) to reach ${threshold}%.</span>`;
+        message += `</div>`;
+        
+        showResult(message, "warning");
+      } else {
+        message += `<div class="result-section success">`;
+        message += `<span class="result-action">🎉 You are above the threshold!</span>`;
+        message += `</div>`;
+        
+        showResult(message, "success");
+        
+        // Launch celebration confetti with enhanced effects
+        launchCelebration();
+      }
+    });
+    
+    function animateInput(id) {
+      const input = document.getElementById(id);
+      const parent = input.parentElement;
+      
+      parent.style.transform = 'translateY(-5px)';
+      setTimeout(() => {
+        parent.style.transform = '';
       }, 300);
-    }, 3000);
-  }
-
-  // Service Worker Registration with proper error handling
-  async registerServiceWorker() {
-    if ('serviceWorker' in navigator) {
-      try {
-        // Force update service worker
-        const registration = await navigator.serviceWorker.register('./service-worker.js', {
-          updateViaCache: 'none'
-        });
+    }
+    
+    function showErrorAnimation() {
+      const container = document.querySelector('.container');
+      container.style.transform = 'translateX(10px)';
+      setTimeout(() => {
+        container.style.transform = 'translateX(-10px)';
+        setTimeout(() => {
+          container.style.transform = 'translateX(5px)';
+          setTimeout(() => {
+            container.style.transform = 'translateX(-5px)';
+            setTimeout(() => {
+              container.style.transform = '';
+            }, 100);
+          }, 100);
+        }, 100);
+      }, 100);
+      
+      // Apply haptic feedback if available
+      if (window.navigator && window.navigator.vibrate) {
+        navigator.vibrate([10, 30, 10]);
+      }
+    }
+    
+    // Display result with enhanced animation
+    function showResult(message, type) {
+      // First hide the result if it's already shown
+      resultDiv.classList.remove('show');
+      
+      setTimeout(() => {
+        resultDiv.innerHTML = message;
+        resultDiv.className = type;
         
-        console.log('Service Worker registered successfully:', registration);
+        // Force reflow
+        void resultDiv.offsetWidth;
         
-        // Handle updates
-        registration.addEventListener('updatefound', () => {
-          const newWorker = registration.installing;
-          newWorker.addEventListener('statechange', () => {
-            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-              this.showUpdateToast();
+        // Show with animation
+        resultDiv.classList.add('show');
+      }, 300);
+    }
+    
+    function launchCelebration() {
+      // Create and append confetti container if not exists
+      let confettiContainer = document.getElementById('confetti-container');
+      
+      if (!confettiContainer) {
+        confettiContainer = document.createElement('div');
+        confettiContainer.id = 'confetti-container';
+        confettiContainer.style.position = 'fixed';
+        confettiContainer.style.top = '0';
+        confettiContainer.style.left = '0';
+        confettiContainer.style.width = '100%';
+        confettiContainer.style.height = '100%';
+        confettiContainer.style.pointerEvents = 'none';
+        confettiContainer.style.zIndex = '9999';
+        document.body.appendChild(confettiContainer);
+      }
+      
+      // Create confetti particles with Apple-style colors
+      const colors = [
+        '#0071e3', // Apple blue
+        '#30d158', // Apple green
+        '#ff453a', // Apple red
+        '#ff9f0a', // Apple orange
+        '#bf5af2'  // Apple purple
+      ];
+      
+      // Number of confetti pieces
+      const confettiCount = window.innerWidth < 600 ? 50 : 100;
+      
+      // Clear previous confetti
+      confettiContainer.innerHTML = '';
+      
+      // Generate confetti pieces
+      for (let i = 0; i < confettiCount; i++) {
+        const confetti = document.createElement('div');
+        
+        // Random properties
+        const color = colors[Math.floor(Math.random() * colors.length)];
+        const size = Math.random() * 10 + 5;
+        const startPositionLeft = Math.random() * 100;
+        const rotationSpeed = Math.random() * 600 + 200;
+        const animationDuration = Math.random() * 3 + 2;
+        const delay = Math.random() * 0.5;
+        const opacity = Math.random() * 0.7 + 0.3;
+        
+        // Set styles
+        confetti.style.position = 'absolute';
+        confetti.style.backgroundColor = color;
+        confetti.style.width = `${size}px`;
+        confetti.style.height = `${size}px`;
+        confetti.style.opacity = opacity.toString();
+        confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+        confetti.style.left = `${startPositionLeft}vw`;
+        confetti.style.top = '-20px';
+        confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
+        confetti.style.animation = `confettiFall ${animationDuration}s ease-in forwards, confettiRotate ${rotationSpeed}ms linear infinite`;
+        confetti.style.animationDelay = `${delay}s`;
+        
+        // Add to container
+        confettiContainer.appendChild(confetti);
+      }
+      
+      // Remove confetti after animation completes
+      setTimeout(() => {
+        if (confettiContainer) {
+          confettiContainer.style.opacity = '0';
+          setTimeout(() => {
+            if (document.body.contains(confettiContainer)) {
+              document.body.removeChild(confettiContainer);
             }
-          });
-        });
-
-        // Check for updates immediately
-        registration.update();
-        
-      } catch (error) {
-        console.error('Service Worker registration failed:', error);
+          }, 1000);
+        }
+      }, 5000);
+      
+      // Add confetti animation keyframes if not already present
+      if (!document.getElementById('confetti-style')) {
+        const style = document.createElement('style');
+        style.id = 'confetti-style';
+        style.textContent = `
+          @keyframes confettiFall {
+            0% { transform: translateY(-20px) rotate(0deg); opacity: var(--opacity); }
+            80% { opacity: var(--opacity); }
+            100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+          }
+          
+          @keyframes confettiRotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+          }
+        `;
+        document.head.appendChild(style);
+      }
+      
+      // Apply haptic success feedback if available
+      if (window.navigator && window.navigator.vibrate) {
+        navigator.vibrate([15, 50, 20]);
       }
     }
   }
-
-  showUpdateToast() {
-    const toast = document.createElement('div');
-    toast.innerHTML = `
-      <span>New version available!</span>
-      <button onclick="window.location.reload()" style="margin-left: 12px; padding: 4px 8px; border: none; border-radius: 4px; background: #6750A4; color: white; cursor: pointer;">
-        Update
-      </button>
-    `;
-    toast.style.cssText = `
-      position: fixed;
-      bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      background-color: var(--md-sys-color-primary-container);
-      color: var(--md-sys-color-on-primary-container);
-      padding: 12px 20px;
-      border-radius: 8px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-      z-index: 1000;
-      font-size: 0.875rem;
-      max-width: 90%;
-      text-align: center;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-    `;
-
-    document.body.appendChild(toast);
-
-    setTimeout(() => {
-      if (document.body.contains(toast)) {
-        document.body.removeChild(toast);
+  
+  // Initialize PWA features for installability
+  function initPWAFeatures() {
+    let deferredPrompt;
+    const installBtn = document.getElementById('install-btn');
+    
+    // Hide install button initially
+    if (installBtn) {
+      installBtn.style.display = 'none';
+    }
+    
+    // Listen for beforeinstallprompt event
+    window.addEventListener('beforeinstallprompt', (e) => {
+      // Prevent the default prompt display
+      e.preventDefault();
+      // Store the event for later use
+      deferredPrompt = e;
+      
+      // Show the install button
+      if (installBtn) {
+        installBtn.style.display = 'block';
+        
+        // Add animation to make it noticeable
+        setTimeout(() => {
+          installBtn.style.animation = 'pulse 1.5s ease-in-out infinite';
+        }, 3000);
       }
-    }, 10000);
+    });
+    
+    // Handle install button click
+    if (installBtn) {
+      installBtn.addEventListener('click', () => {
+        // Button press animation
+        installBtn.style.transform = 'scale(0.95)';
+        
+        setTimeout(() => {
+          installBtn.style.transform = '';
+        }, 200);
+        
+        // If no installation prompt available
+        if (!deferredPrompt) {
+          // Show helper message for iOS users
+          const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+          
+          if (isIOS) {
+            const resultDiv = document.getElementById('result');
+            if (resultDiv) {
+              showResult(`
+                <div class="result-section">
+                  <span class="result-title">Install on iOS</span>
+                  <span class="result-action">Tap the share icon ⬆️ and then "Add to Home Screen" to install this app.</span>
+                </div>
+              `, "");
+            }
+          }
+          return;
+        }
+        
+        // Show the installation prompt
+        deferredPrompt.prompt();
+        
+        // Wait for user choice
+        deferredPrompt.userChoice.then((choiceResult) => {
+          if (choiceResult.outcome === 'accepted') {
+            // Hide the button after successful installation
+            installBtn.style.display = 'none';
+            
+            // Show success message
+            const resultDiv = document.getElementById('result');
+            if (resultDiv) {
+              showResult(`
+                <div class="result-section success">
+                  <span class="result-action">🎉 App installed successfully!</span>
+                </div>
+              `, "success");
+            }
+          }
+          
+          // Clear the prompt reference
+          deferredPrompt = null;
+        });
+      });
+    }
+    
+    // Helper function to show result
+    function showResult(message, type) {
+      const resultDiv = document.getElementById('result');
+      if (!resultDiv) return;
+      
+      resultDiv.classList.remove('show');
+      
+      setTimeout(() => {
+        resultDiv.innerHTML = message;
+        resultDiv.className = type;
+        resultDiv.classList.add('show');
+      }, 300);
+    }
   }
-}
-
-// Initialize app
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', () => {
-    new AttendanceCalculator();
-  });
-} else {
-  new AttendanceCalculator();
-}
+  
+  // Initialize additional Apple-style interactions
+  function initInteractions() {
+    // Add subtle hover effects to input fields
+    document.querySelectorAll('input').forEach(input => {
+      input.addEventListener('mouseenter', () => {
+        if (window.innerWidth > 768) {  // Only on larger devices
+          input.style.transform = 'translateY(-2px)';
+          input.style.boxShadow = '0 4px 12px var(--shadow)';
+        }
+      });
+      
+      input.addEventListener('mouseleave', () => {
+        input.style.transform = '';
+        input.style.boxShadow = '';
+      });
+    });
+    
+    // Add focus animations to input groups
+    document.querySelectorAll('.input-group').forEach(group => {
+      const input = group.querySelector('input');
+      const label = group.querySelector('label');
+      
+      if (input && label) {
+        input.addEventListener('focus', () => {
+          group.classList.add('focused');
+          label.style.color = 'var(--accent)';
+          label.style.transform = 'translateY(-3px)';
+        });
+        
+        input.addEventListener('blur', () => {
+          group.classList.remove('focused');
+          label.style.color = '';
+          label.style.transform = '';
+        });
+      }
+    });
+    
+    // Add smooth scrolling
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function(e) {
+        e.preventDefault();
+        
+        const targetId = this.getAttribute('href');
+        const targetElement = document.querySelector(targetId);
+        
+        if (targetElement) {
+          window.scrollTo({
+            top: targetElement.offsetTop - 20,
+            behavior: 'smooth'
+          });
+        }
+      });
+    });
+    
+    // Add subtle parallax effect
+    if (window.innerWidth > 768) {
+      window.addEventListener('mousemove', (e) => {
+        const container = document.querySelector('.container');
+        const header = document.querySelector('header h1');
+        
+        if (container && header) {
+          const mouseX = e.clientX / window.innerWidth - 0.5;
+          const mouseY = e.clientY / window.innerHeight - 0.5;
+          
+          container.style.transform = `translateX(${mouseX * 8}px) translateY(${mouseY * 8}px)`;
+          header.style.transform = `translateX(${mouseX * 15}px) translateY(${mouseY * 15}px)`;
+        }
+      });
+    }
+    
+    // Add auto hide tooltip after showing for a few seconds
+    const tooltip = document.querySelector('.tooltip');
+    if (tooltip) {
+      setTimeout(() => {
+        tooltip.style.opacity = '0';
+      }, 5000);
+    }
+    
+    // Handle adaptive animations based on device power
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reducedMotion) {
+      // Simplify animations for users who prefer reduced motion
+      document.body.classList.add('reduced-motion');
+    }
+  }

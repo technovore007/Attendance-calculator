@@ -1,4 +1,4 @@
-// Enhanced Material Design 3 PWA with optimized performance
+// Enhanced Attendance Calculator with Fixed Logic
 class AttendanceCalculator {
   constructor() {
     this.deferredPrompt = null;
@@ -13,19 +13,13 @@ class AttendanceCalculator {
     this.initCalculator();
     this.initInstallPrompt();
     this.registerServiceWorker();
-    
-    // Add subtle entrance animations
-    requestAnimationFrame(() => {
-      document.body.classList.add('loaded');
-    });
   }
 
-  // Theme Management with System Preference Support
+  // Theme Management
   initTheme() {
     const themeToggle = document.getElementById('theme-toggle');
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
     
-    // Initialize theme
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme) {
       document.body.dataset.theme = savedTheme;
@@ -35,12 +29,10 @@ class AttendanceCalculator {
       this.updateThemeIcon(true);
     }
     
-    // Theme toggle handler
     themeToggle.addEventListener('click', () => {
       this.toggleTheme();
     });
     
-    // Listen for system theme changes
     prefersDark.addEventListener('change', (e) => {
       if (!localStorage.getItem('theme')) {
         document.body.dataset.theme = e.matches ? 'dark' : '';
@@ -53,10 +45,8 @@ class AttendanceCalculator {
     const themeToggle = document.getElementById('theme-toggle');
     const isDark = document.body.dataset.theme === 'dark';
     
-    // Add smooth rotation animation
     themeToggle.style.transform = 'rotate(180deg) scale(0.9)';
     
-    // Haptic feedback
     if ('vibrate' in navigator) {
       navigator.vibrate(5);
     }
@@ -66,7 +56,6 @@ class AttendanceCalculator {
       localStorage.setItem('theme', document.body.dataset.theme);
       this.updateThemeIcon(!isDark);
       
-      // Reset animation
       setTimeout(() => {
         themeToggle.style.transform = '';
       }, 200);
@@ -75,27 +64,24 @@ class AttendanceCalculator {
 
   updateThemeIcon(isDark) {
     const themeToggle = document.getElementById('theme-toggle');
-    themeToggle.textContent = isDark ? '🌞' : '🌙';
+    themeToggle.textContent = isDark ? '☀️' : '🌙';
     themeToggle.setAttribute('aria-label', `Switch to ${isDark ? 'light' : 'dark'} mode`);
   }
 
   // PWA Installation Management
   initPWA() {
-    // Listen for beforeinstallprompt event
     window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault();
       this.deferredPrompt = e;
       this.showInstallBanner();
     });
 
-    // Listen for app installed event
     window.addEventListener('appinstalled', () => {
       this.isInstalled = true;
       this.hideInstallPrompts();
       this.showToast('App installed successfully! 🎉');
     });
 
-    // Check if already installed
     if (window.matchMedia('(display-mode: standalone)').matches) {
       this.isInstalled = true;
       this.hideInstallPrompts();
@@ -111,34 +97,40 @@ class AttendanceCalculator {
     const closeBtn = document.getElementById('install-banner-close');
     const installBtn = document.getElementById('install-banner-btn');
 
-    banner.classList.remove('hidden');
+    if (banner) {
+      banner.classList.remove('hidden');
 
-    closeBtn.addEventListener('click', () => {
-      this.hideInstallBanner();
-      localStorage.setItem('install-banner-dismissed', 'true');
-    });
+      closeBtn.addEventListener('click', () => {
+        this.hideInstallBanner();
+        localStorage.setItem('install-banner-dismissed', 'true');
+      });
 
-    installBtn.addEventListener('click', () => {
-      this.installApp();
-    });
+      installBtn.addEventListener('click', () => {
+        this.installApp();
+      });
+    }
   }
 
   hideInstallBanner() {
     const banner = document.getElementById('install-banner');
-    banner.classList.add('hidden');
+    if (banner) {
+      banner.classList.add('hidden');
+    }
   }
 
   initInstallPrompt() {
     const installBtn = document.getElementById('install-btn');
     
-    if (this.isInstalled) {
+    if (this.isInstalled && installBtn) {
       installBtn.style.display = 'none';
       return;
     }
 
-    installBtn.addEventListener('click', () => {
-      this.installApp();
-    });
+    if (installBtn) {
+      installBtn.addEventListener('click', () => {
+        this.installApp();
+      });
+    }
   }
 
   async installApp() {
@@ -173,14 +165,13 @@ class AttendanceCalculator {
   }
 
   checkInstallStatus() {
-    // Check if running as PWA
     if (window.navigator.standalone || window.matchMedia('(display-mode: standalone)').matches) {
       this.isInstalled = true;
       this.hideInstallPrompts();
     }
   }
 
-  // Calculator Logic
+  // Calculator Logic - FIXED ORIGINAL LOGIC
   initCalculator() {
     const calculateBtn = document.getElementById('calculate-btn');
     const inputs = document.querySelectorAll('input[type="number"]');
@@ -189,16 +180,11 @@ class AttendanceCalculator {
       this.calculateAttendance();
     });
 
-    // Add input validation and enter key support
     inputs.forEach(input => {
       input.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') {
           this.calculateAttendance();
         }
-      });
-
-      input.addEventListener('input', () => {
-        this.clearValidationErrors();
       });
     });
   }
@@ -207,21 +193,18 @@ class AttendanceCalculator {
     const calculateBtn = document.getElementById('calculate-btn');
     const btnText = calculateBtn.querySelector('.btn-text');
     const btnLoader = calculateBtn.querySelector('.btn-loader');
-    const resultContainer = document.getElementById('result');
     
     // Show loading state
     btnText.classList.add('hidden');
     btnLoader.classList.remove('hidden');
     calculateBtn.disabled = true;
 
-    // Haptic feedback
     if ('vibrate' in navigator) {
       navigator.vibrate(10);
     }
 
     try {
-      // Simulate calculation delay for better UX
-      await new Promise(resolve => setTimeout(resolve, 600));
+      await new Promise(resolve => setTimeout(resolve, 500));
       
       const result = this.performCalculation();
       this.displayResult(result);
@@ -229,13 +212,13 @@ class AttendanceCalculator {
     } catch (error) {
       this.showError('Calculation failed. Please check your inputs.');
     } finally {
-      // Reset button state
       btnText.classList.remove('hidden');
       btnLoader.classList.add('hidden');
       calculateBtn.disabled = false;
     }
   }
 
+  // FIXED CALCULATION LOGIC - RESTORED ORIGINAL BEHAVIOR
   performCalculation() {
     const totalClasses = parseInt(document.getElementById('total-classes').value);
     const missedClasses = parseInt(document.getElementById('missed-classes').value);
@@ -254,35 +237,37 @@ class AttendanceCalculator {
       throw new Error('Please enter a valid threshold percentage (1-100)');
     }
 
+    // ORIGINAL CALCULATION LOGIC RESTORED
     let attendedClasses = totalClasses - missedClasses;
     let totalForCalculation;
 
     if (countExtraInTotal) {
-      // Extra classes reduce the total requirement
-      totalForCalculation = totalClasses + extraClasses;
-      attendedClasses = totalClasses - missedClasses;
+      // Toggle ON: Extra classes reduce the total requirement
+      totalForCalculation = totalClasses - extraClasses;
+      // Attended classes remain the same (totalClasses - missedClasses)
     } else {
-      // Extra classes add to attendance
+      // Toggle OFF: Extra classes add to attendance
       totalForCalculation = totalClasses;
-      attendedClasses = totalClasses - missedClasses + extraClasses;
+      attendedClasses = attendedClasses + extraClasses;
     }
 
     const currentAttendance = (attendedClasses / totalForCalculation) * 100;
     const requiredAttendance = threshold;
-    const attendanceGap = requiredAttendance - currentAttendance;
 
     let status, message, classesNeeded = 0, maxMissable = 0;
 
     if (currentAttendance >= requiredAttendance) {
       status = 'success';
-      // Calculate maximum classes that can be missed
-      maxMissable = Math.floor((attendedClasses - (requiredAttendance * totalForCalculation / 100)) / (requiredAttendance / 100));
-      message = `Great! You're meeting the attendance requirement.`;
+      // Calculate maximum classes that can be missed while maintaining threshold
+      const minRequiredClasses = Math.ceil((requiredAttendance * totalForCalculation) / 100);
+      maxMissable = attendedClasses - minRequiredClasses;
+      message = `Excellent! You're meeting the attendance requirement.`;
     } else {
       status = 'warning';
-      // Calculate classes needed to meet requirement
-      classesNeeded = Math.ceil((requiredAttendance * totalForCalculation / 100) - attendedClasses);
-      message = `You need to attend ${classesNeeded} more class${classesNeeded > 1 ? 'es' : ''} to meet the requirement.`;
+      // Calculate additional classes needed to meet requirement
+      const requiredClasses = Math.ceil((requiredAttendance * totalForCalculation) / 100);
+      classesNeeded = requiredClasses - attendedClasses;
+      message = `You need to attend ${classesNeeded} more class${classesNeeded > 1 ? 'es' : ''} to reach ${requiredAttendance}%.`;
     }
 
     return {
@@ -309,7 +294,7 @@ class AttendanceCalculator {
         <div class="result-icon">${statusIcon}</div>
         <div class="result-text">
           <strong>Current Attendance: ${result.currentAttendance}%</strong>
-          <span>Required: ${result.requiredAttendance}%</span>
+          <span>Required: ${result.requiredAttendance}% | Classes: ${result.attendedClasses}/${result.totalForCalculation}</span>
         </div>
       </div>
       
@@ -317,7 +302,6 @@ class AttendanceCalculator {
         <div class="result-icon">📊</div>
         <div class="result-text">
           <strong>${result.message}</strong>
-          <span>Classes attended: ${result.attendedClasses} / ${result.totalForCalculation}</span>
         </div>
       </div>
       
@@ -325,7 +309,7 @@ class AttendanceCalculator {
         <div class="result-item result-success">
           <div class="result-icon">🎯</div>
           <div class="result-text">
-            <strong>You can miss up to ${result.maxMissable} more class${result.maxMissable > 1 ? 'es' : ''}</strong>
+            <strong>You can miss ${result.maxMissable} more class${result.maxMissable > 1 ? 'es' : ''}</strong>
             <span>And still maintain ${result.requiredAttendance}% attendance</span>
           </div>
         </div>
@@ -344,7 +328,6 @@ class AttendanceCalculator {
     
     resultContainer.classList.remove('hidden');
     
-    // Scroll to result smoothly
     setTimeout(() => {
       resultContainer.scrollIntoView({ 
         behavior: 'smooth', 
@@ -370,15 +353,7 @@ class AttendanceCalculator {
     resultContainer.classList.remove('hidden');
   }
 
-  clearValidationErrors() {
-    // Remove any existing error states
-    document.querySelectorAll('input.error').forEach(input => {
-      input.classList.remove('error');
-    });
-  }
-
   showToast(message) {
-    // Create toast notification
     const toast = document.createElement('div');
     toast.className = 'toast';
     toast.textContent = message;
@@ -387,11 +362,11 @@ class AttendanceCalculator {
       bottom: 20px;
       left: 50%;
       transform: translateX(-50%);
-      background-color: var(--md-sys-color-surface-variant);
-      color: var(--md-sys-color-on-surface-variant);
+      background-color: var(--md-sys-color-inverse-surface);
+      color: var(--md-sys-color-inverse-on-surface);
       padding: 12px 20px;
       border-radius: 8px;
-      box-shadow: var(--md-sys-elevation-level3);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
       z-index: 1000;
       font-size: 0.875rem;
       max-width: 90%;
@@ -404,19 +379,25 @@ class AttendanceCalculator {
     setTimeout(() => {
       toast.style.animation = 'slideDown 0.3s ease';
       setTimeout(() => {
-        document.body.removeChild(toast);
+        if (document.body.contains(toast)) {
+          document.body.removeChild(toast);
+        }
       }, 300);
     }, 3000);
   }
 
-  // Service Worker Registration
+  // Service Worker Registration with proper error handling
   async registerServiceWorker() {
     if ('serviceWorker' in navigator) {
       try {
-        const registration = await navigator.serviceWorker.register('./service-worker.js');
+        // Force update service worker
+        const registration = await navigator.serviceWorker.register('./service-worker.js', {
+          updateViaCache: 'none'
+        });
+        
         console.log('Service Worker registered successfully:', registration);
         
-        // Handle service worker updates
+        // Handle updates
         registration.addEventListener('updatefound', () => {
           const newWorker = registration.installing;
           newWorker.addEventListener('statechange', () => {
@@ -425,6 +406,10 @@ class AttendanceCalculator {
             }
           });
         });
+
+        // Check for updates immediately
+        registration.update();
+        
       } catch (error) {
         console.error('Service Worker registration failed:', error);
       }
@@ -435,7 +420,7 @@ class AttendanceCalculator {
     const toast = document.createElement('div');
     toast.innerHTML = `
       <span>New version available!</span>
-      <button onclick="window.location.reload()" style="margin-left: 12px; padding: 4px 8px; border: none; border-radius: 4px; background: var(--md-sys-color-primary); color: var(--md-sys-color-on-primary); cursor: pointer;">
+      <button onclick="window.location.reload()" style="margin-left: 12px; padding: 4px 8px; border: none; border-radius: 4px; background: #6750A4; color: white; cursor: pointer;">
         Update
       </button>
     `;
@@ -448,7 +433,7 @@ class AttendanceCalculator {
       color: var(--md-sys-color-on-primary-container);
       padding: 12px 20px;
       border-radius: 8px;
-      box-shadow: var(--md-sys-elevation-level3);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
       z-index: 1000;
       font-size: 0.875rem;
       max-width: 90%;
@@ -469,7 +454,7 @@ class AttendanceCalculator {
   }
 }
 
-// Initialize app when DOM is loaded
+// Initialize app
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', () => {
     new AttendanceCalculator();

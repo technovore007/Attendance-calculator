@@ -4,44 +4,16 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#ffffff">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   
   <title>Attendance Calculator 📚</title>
 
   <link rel="stylesheet" href="styles.css">
-  <link rel="manifest" href="manifest.json">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-  <!-- Favicon and app icons -->
-  <link rel="icon" href="icons/favicon.ico" type="image/x-icon">
-  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
-  <link rel="apple-touch-icon" sizes="152x152" href="icons/icon-152.png">
-  <link rel="apple-touch-icon" sizes="180x180" href="icons/icon-180.png">
-  <link rel="apple-touch-icon" sizes="167x167" href="icons/icon-167.png">
-
-  <!-- Splash screens for iOS -->
-  <link rel="apple-touch-startup-image" href="icons/splash-640x1136.png" media="(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2)">
-  <link rel="apple-touch-startup-image" href="icons/splash-750x1334.png" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)">
-  <link rel="apple-touch-startup-image" href="icons/splash-1242x2208.png" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)">
-  <link rel="apple-touch-startup-image" href="icons/splash-1125x2436.png" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)">
-  <link rel="apple-touch-startup-image" href="icons/splash-1536x2048.png" media="(min-device-width: 768px) and (max-device-width: 1024px) and (-webkit-device-pixel-ratio: 2)">
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/canvas-confetti/1.6.0/confetti.browser.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
   <script src="script.js" defer></script>
-  <script>
-    // Register service worker for PWA functionality
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/service-worker.js')
-          .then(registration => {
-            console.log('Service Worker registered with scope:', registration.scope);
-          })
-          .catch(error => {
-            console.error('Service Worker registration failed:', error);
-          });
-      });
-    }
-  </script>
 </head>
 <body> 
   <div id="theme-toggle-container">
@@ -80,7 +52,6 @@
             <input type="checkbox" id="extra-classes-toggle">
             <span class="slider round"></span>
           </label>
-          <span class="tooltip">ON: Extra classes won't count in total</span>
         </div>
       </div>
 
@@ -98,10 +69,6 @@
     <div id="result" class="result-card">
       <!-- Results will be populated here -->
     </div>
-
-    <button id="install-btn" class="install-btn" style="display: none;">
-      <span class="icon">📲</span> Install App
-    </button>
   </main>
   
   <footer>
